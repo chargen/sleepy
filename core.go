@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gorilla/mux"
 	"net/http"
 	"net/url"
 )
@@ -41,7 +42,7 @@ type DeleteSupported interface {
 
 // Interface for arbitrary muxer support (like http.ServeMux).
 type APIMux interface {
-	HandleFunc(pattern string, handler func(http.ResponseWriter, *http.Request))
+	HandleFunc(pattern string, handler func(http.ResponseWriter, *http.Request)) *mux.Route
 	ServeHTTP(w http.ResponseWriter, r *http.Request)
 }
 
@@ -118,7 +119,7 @@ func (api *API) Mux() APIMux {
 	if api.muxInitialized {
 		return api.mux
 	} else {
-		api.mux = http.NewServeMux()
+		api.mux = mux.NewRouter()
 		api.muxInitialized = true
 		return api.mux
 	}
